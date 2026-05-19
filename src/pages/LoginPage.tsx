@@ -1,6 +1,9 @@
 import { useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
+import { getProfile } from '@/db/api';
+import { supabase } from '@/db/supabase';
+import { adminPath } from '@/config/admin';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -35,11 +38,28 @@ export default function LoginPage() {
       } else {
         toast.error(error.message || 'Failed to sign in');
       }
-    } else {
-      toast.success('Signed in successfully');
-      navigate(from, { replace: true });
+      setLoading(false);
+      return;
     }
 
+    toast.success('Signed in successfully');
+
+    // Fetch profile immediately to check role and redirect admin to admin panel
+    try {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (session?.user) {
+        const profileData = await getProfile(session.user.id);
+        if (profileData?.role === 'admin') {
+          navigate(adminPath(), { replace: true });
+          setLoading(false);
+          return;
+        }
+      }
+    } catch {
+      // Fallback to default redirect
+    }
+
+    navigate(from, { replace: true });
     setLoading(false);
   };
 

@@ -7,7 +7,7 @@ interface RouteGuardProps {
   children: React.ReactNode;
 }
 
-// Please add the pages that can be accessed without logging in to PUBLIC_ROUTES.
+// Pages accessible without login
 const PUBLIC_ROUTES = ['/login', '/forgot-password', '/reset-password', '/verify-email', '/403', '/404', '/', '/products', '/products/*', '/app'];
 
 function matchPublicRoute(path: string, patterns: string[]) {
@@ -21,30 +21,48 @@ function matchPublicRoute(path: string, patterns: string[]) {
 }
 
 export function RouteGuard({ children }: RouteGuardProps) {
-  const { user, profile, loading } = useAuth();
+  const { user, profile, loading, profileLoading } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
+
+  const adminBasePath = getAdminBasePath();
+  const isAdminRoute = location.pathname.startsWith(adminBasePath);
 
   useEffect(() => {
     if (loading) return;
 
     const isPublic = matchPublicRoute(location.pathname, PUBLIC_ROUTES);
-    const adminBasePath = getAdminBasePath();
-    const isAdminRoute = location.pathname.startsWith(adminBasePath);
 
-    // Redirect non-logged-in users from protected routes
+    // Redirect unauthenticated users away from protected routes
     if (!user && !isPublic) {
       navigate('/login', { state: { from: location.pathname }, replace: true });
       return;
     }
 
-    // Redirect non-admin users from admin routes
-    if (isAdminRoute && profile && profile.role !== 'admin') {
-      navigate('/', { replace: true });
+    // Only enforce admin check once profile has finished loading
+    if (!profileLoading && isAdminRoute) {
+      if (!user) {
+        navigate('/login', { state: { from: location.pathname }, replace: true });
+        return;
+      }
+      if (profile && profile.role !== 'admin') {
+        // Logged-in non-admin tried to access admin — send them home
+        navigate('/', { replace: true });
+      }
     }
-  }, [user, profile, loading, location.pathname, navigate]);
+  }, [user, profile, loading, profileLoading, location.pathname, navigate, isAdminRoute]);
 
+  // Block render while auth is initialising
   if (loading) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
+      </div>
+    );
+  }
+
+  // On admin routes, hold render until we know the profile role
+  if (isAdminRoute && user && profileLoading) {
     return (
       <div className="flex items-center justify-center min-h-screen">
         <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>

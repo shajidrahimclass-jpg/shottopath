@@ -1,4 +1,4 @@
-import { createContext, useContext, useEffect, useState, type ReactNode } from 'react';
+import React, { createContext, useContext, useEffect, useState, type ReactNode } from 'react';
 import { supabase } from '@/db/supabase';
 import type { User } from '@supabase/supabase-js';
 import type { Profile } from '@/types';
@@ -64,6 +64,7 @@ interface AuthContextType {
   user: User | null;
   profile: Profile | null;
   loading: boolean;
+  profileLoading: boolean;
   signInWithEmail: (email: string, password: string) => Promise<{ error: Error | null }>;
   signUpWithEmail: (email: string, password: string, name: string) => Promise<{ error: Error | null }>;
   signInWithGoogle: () => Promise<{ error: Error | null }>;
@@ -77,41 +78,73 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [profile, setProfile] = useState<Profile | null>(null);
   const [loading, setLoading] = useState(true);
+  const [profileLoading, setProfileLoading] = useState(false);
+  // Track latest user ID to discard stale async results
+  const latestUserIdRef = React.useRef<string | null>(null);
+
+  const loadProfile = async (userId: string) => {
+    latestUserIdRef.current = userId;
+    setProfileLoading(true);
+    const profileData = await getProfile(userId);
+    // Only commit if this result is still for the current user
+    if (latestUserIdRef.current === userId) {
+      setProfile(profileData);
+      setProfileLoading(false);
+    }
+  };
 
   const refreshProfile = async () => {
     if (!user) {
       setProfile(null);
       return;
     }
-    const profileData = await getProfile(user.id);
-    setProfile(profileData);
+    await loadProfile(user.id);
   };
 
   useEffect(() => {
+    // Initial session check — sets loading=false only after profile is loaded
     supabase.auth.getSession().then(async ({ data: { session } }) => {
-      setUser(session?.user ?? null);
-      if (session?.user) {
-        // Wait for profile before clearing loading — prevents "Profile Not Found" flash
-        const profileData = await getProfile(session.user.id);
-        setProfile(profileData);
+      const currentUser = session?.user ?? null;
+      setUser(currentUser);
+      if (currentUser) {
+        latestUserIdRef.current = currentUser.id;
+        setProfileLoading(true);
+        const profileData = await getProfile(currentUser.id);
+        if (latestUserIdRef.current === currentUser.id) {
+          setProfile(profileData);
+          setProfileLoading(false);
+        }
       }
       setLoading(false);
     });
 
-    // Do NOT use await inside this callback — use .then() to avoid deadlocks
+    // Listen for subsequent auth changes (sign-in, sign-out, token refresh)
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
-      setUser(session?.user ?? null);
-      if (session?.user) {
-        // For OAuth sign-ins (SIGNED_IN after redirect), ensure profile exists
+      const currentUser = session?.user ?? null;
+      setUser(currentUser);
+
+      if (currentUser) {
         if (event === 'SIGNED_IN') {
-          ensureOAuthProfile(session.user).then(() => {
-            getProfile(session.user.id).then(setProfile);
+          // For OAuth (Google etc.) we must ensure profile exists first
+          const provider = currentUser.app_metadata?.provider ?? 'email';
+          if (provider !== 'email') {
+            ensureOAuthProfile(currentUser).then(() => loadProfile(currentUser.id));
+          } else {
+            loadProfile(currentUser.id);
+          }
+        } else if (event === 'TOKEN_REFRESHED' || event === 'USER_UPDATED') {
+          // Refresh profile silently — don't reset to null first
+          getProfile(currentUser.id).then(data => {
+            if (latestUserIdRef.current === currentUser.id && data) {
+              setProfile(data);
+            }
           });
-        } else {
-          getProfile(session.user.id).then(setProfile);
         }
+        // INITIAL_SESSION: already handled by getSession() above — skip to avoid double load
       } else {
+        latestUserIdRef.current = null;
         setProfile(null);
+        setProfileLoading(false);
       }
     });
 
@@ -171,7 +204,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
 
   return (
-    <AuthContext.Provider value={{ user, profile, loading, signInWithEmail, signUpWithEmail, signInWithGoogle, signOut, refreshProfile }}>
+    <AuthContext.Provider value={{ user, profile, loading, profileLoading, signInWithEmail, signUpWithEmail, signInWithGoogle, signOut, refreshProfile }}>
       {children}
     </AuthContext.Provider>
   );
