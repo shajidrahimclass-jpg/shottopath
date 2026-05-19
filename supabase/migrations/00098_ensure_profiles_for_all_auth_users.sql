@@ -21,8 +21,8 @@ SELECT
     'user_' || SUBSTRING(au.id::TEXT, 1, 8)
   ) AS full_name,
   CASE
-    WHEN au.email = 'shajidrahimclass@gmail.com' THEN 'admin'::public.user_role
-    WHEN au.email = 'admin@shottopath.com'       THEN 'admin'::public.user_role
+    WHEN au.email = '[owner-email]' THEN 'admin'::public.user_role
+    WHEN au.email = '[admin-email]'       THEN 'admin'::public.user_role
     ELSE 'user'::public.user_role
   END AS role
 FROM auth.users au

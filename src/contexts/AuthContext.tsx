@@ -86,9 +86,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     latestUserIdRef.current = userId;
     setProfileLoading(true);
     const profileData = await getProfile(userId);
-    // Only commit if this result is still for the current user
+    // Only commit if this result is still for the current user.
+    // Never overwrite an existing profile with null — a null result is a
+    // transient DB miss (e.g. token not yet committed), not a real deletion.
     if (latestUserIdRef.current === userId) {
-      setProfile(profileData);
+      if (profileData) {
+        setProfile(profileData);
+      }
+      // If null, keep whatever profile we already have
       setProfileLoading(false);
     }
   };
@@ -125,20 +130,27 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
       if (currentUser) {
         if (event === 'SIGNED_IN') {
-          // For OAuth (Google etc.) we must ensure profile exists first
+          // IMPORTANT: defer the DB call so Supabase finishes committing the new
+          // session tokens before we make an authenticated query. Calling Supabase
+          // APIs synchronously inside onAuthStateChange can cause the request to run
+          // with stale/missing tokens → RLS blocks → profile returns null.
           const provider = currentUser.app_metadata?.provider ?? 'email';
-          if (provider !== 'email') {
-            ensureOAuthProfile(currentUser).then(() => loadProfile(currentUser.id));
-          } else {
-            loadProfile(currentUser.id);
-          }
+          setTimeout(() => {
+            if (provider !== 'email') {
+              ensureOAuthProfile(currentUser).then(() => loadProfile(currentUser.id));
+            } else {
+              loadProfile(currentUser.id);
+            }
+          }, 0);
         } else if (event === 'TOKEN_REFRESHED' || event === 'USER_UPDATED') {
           // Refresh profile silently — don't reset to null first
-          getProfile(currentUser.id).then(data => {
-            if (latestUserIdRef.current === currentUser.id && data) {
-              setProfile(data);
-            }
-          });
+          setTimeout(() => {
+            getProfile(currentUser.id).then(data => {
+              if (latestUserIdRef.current === currentUser.id && data) {
+                setProfile(data);
+              }
+            });
+          }, 0);
         }
         // INITIAL_SESSION: already handled by getSession() above — skip to avoid double load
       } else {

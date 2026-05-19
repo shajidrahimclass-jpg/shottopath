@@ -1,4 +1,4 @@
-import { useEffect, useState, useCallback } from 'react';
+import { useEffect, useState } from 'react';
 import PageMeta from '@/components/common/PageMeta';
 import { useNavigate } from 'react-router-dom';
 import { MainLayout } from '@/components/layouts/MainLayout';
@@ -6,8 +6,8 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/com
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { useAuth } from '@/contexts/AuthContext';
-import { getDeliveryAddresses, createDeliveryAddress, updateDeliveryAddress, deleteDeliveryAddress, getOrders, getProfile } from '@/db/api';
-import type { DeliveryAddress, OrderWithItems, Profile } from '@/types';
+import { getDeliveryAddresses, createDeliveryAddress, updateDeliveryAddress, deleteDeliveryAddress, getOrders } from '@/db/api';
+import type { DeliveryAddress, OrderWithItems } from '@/types';
 import { toast } from 'sonner';
 import { Plus, Trash2, User, MapPin, Edit, Package, ShoppingBag, Home, Briefcase, MoreHorizontal, Star, RefreshCw } from 'lucide-react';
 import { AddressDialog } from '@/components/AddressDialog';
@@ -15,9 +15,7 @@ import { Separator } from '@/components/ui/separator';
 import { Badge } from '@/components/ui/badge';
 
 export default function ProfilePage() {
-  const { user, profile: ctxProfile } = useAuth();
-  const [localProfile, setLocalProfile] = useState<Profile | null>(null);
-  const [profileLoading, setProfileLoading] = useState(false);
+  const { user, profile, profileLoading, refreshProfile } = useAuth();
   const [addresses, setAddresses] = useState<DeliveryAddress[]>([]);
   const [orders, setOrders] = useState<OrderWithItems[]>([]);
   const [loading, setLoading] = useState(false);
@@ -26,36 +24,14 @@ export default function ProfilePage() {
   const [dialogMode, setDialogMode] = useState<'add' | 'edit'>('add');
   const navigate = useNavigate();
 
-  // Use context profile if available, otherwise fall back to locally fetched profile
-  const profile = ctxProfile ?? localProfile;
-
-  const fetchLocalProfile = useCallback(async () => {
-    if (!user) return;
-    setProfileLoading(true);
-    try {
-      const data = await getProfile(user.id);
-      setLocalProfile(data);
-    } catch (e) {
-      console.error('Failed to fetch local profile:', e);
-    } finally {
-      setProfileLoading(false);
-    }
-  }, [user]);
-
   useEffect(() => {
     if (!user) {
       navigate('/login', { state: { from: '/profile' } });
       return;
     }
-
     loadAddresses();
     loadOrders();
-
-    // If context profile is missing, try fetching independently
-    if (!ctxProfile) {
-      fetchLocalProfile();
-    }
-  }, [user, navigate, ctxProfile, fetchLocalProfile]);
+  }, [user, navigate]);
 
   const loadAddresses = async () => {
     if (!user) return;
@@ -170,8 +146,15 @@ export default function ProfilePage() {
         description="Manage your account settings, delivery addresses, and personal information."
       />
       <div className="container mx-auto px-3 md:px-4 py-4 md:py-8">
-        {/* Profile missing warning with retry */}
-        {!profile && user && (
+        {/* Show spinner while profile is loading — prevents the "not found" flash */}
+        {profileLoading && !profile && (
+          <div className="flex items-center justify-center py-20">
+            <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-primary" />
+          </div>
+        )}
+
+        {/* Only show "Profile Not Found" when loading is fully done and still no profile */}
+        {!profileLoading && !profile && user && (
           <div className="mb-6 p-4 bg-warning/10 border-2 border-warning/30 rounded-lg">
             <div className="flex items-start gap-3">
               <div className="p-2 bg-warning/20 rounded-lg shrink-0">
@@ -185,22 +168,17 @@ export default function ProfilePage() {
                 <Button
                   size="sm"
                   variant="outline"
-                  onClick={fetchLocalProfile}
-                  disabled={profileLoading}
+                  onClick={refreshProfile}
                   className="border-warning/40 text-warning-foreground hover:bg-warning/20"
                 >
-                  {profileLoading ? (
-                    <RefreshCw className="h-4 w-4 animate-spin mr-2" />
-                  ) : (
-                    <RefreshCw className="h-4 w-4 mr-2" />
-                  )}
+                  <RefreshCw className="h-4 w-4 mr-2" />
                   Retry
                 </Button>
               </div>
             </div>
           </div>
         )}
-        
+
         <div className="mb-6 md:mb-8">
           <h1 className="text-2xl md:text-3xl font-bold mb-2">My Profile</h1>
           <p className="text-sm md:text-base text-muted-foreground">
@@ -329,13 +307,6 @@ export default function ProfilePage() {
                   </p>
                 </div>
                 
-                {!profile && user && (
-                  <div className="mt-4 p-3 bg-warning/10 border border-warning/20 rounded-lg">
-                    <p className="text-xs text-warning-foreground mb-2">
-                      <strong>Profile not found.</strong> Use the Retry button above to reload your profile.
-                    </p>
-                  </div>
-                )}
               </CardContent>
             </Card>
 
