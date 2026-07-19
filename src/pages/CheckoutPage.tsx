@@ -480,6 +480,7 @@ export default function CheckoutPage() {
         voucher_code: appliedVoucher?.code || null,
         notes: orderNotes.trim() || null,
         gift_card_email: hasGiftCard ? giftCardEmail.trim() : null,
+        disappearing_chat: false
       };
 
       const orderItems = cartItems.map(item => ({

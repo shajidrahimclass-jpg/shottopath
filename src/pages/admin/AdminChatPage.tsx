@@ -187,7 +187,7 @@ export default function AdminChatPage() {
         
         const { error } = await supabase
           .from('orders')
-          .update({ disappearing_chat: isDisappearing })
+          .update({ disappearing_chat: isDisappearing } as never)
           .eq('id', orderId);
           
         if (error) throw error;

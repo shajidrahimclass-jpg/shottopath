@@ -2584,8 +2584,19 @@ export const getReferrerStats = async (): Promise<{ referrer: string; count: num
 };
 
 export const refreshDownloadStats = async (): Promise<void> => {
-  const { error } = await supabase.rpc('refresh_download_stats');
-  if (error) throw error;
+  try {
+    const { error } = await supabase.rpc('refresh_download_stats');
+    if (error) {
+      if (error.code === 'PGRST202') {
+        console.warn('refresh_download_stats function not found in Supabase. Analytics might not be updated.');
+        return;
+      }
+      throw error;
+    }
+  } catch (err) {
+    console.error('Error refreshing download stats:', err);
+    // Non-critical, just log warning
+  }
 };
 
 // Review Helpful Voting APIs

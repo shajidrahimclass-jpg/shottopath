@@ -32,13 +32,13 @@ export default function AdminOAuthStatus() {
     setTestResult(null);
 
     try {
-      const { error } = await supabase.auth.signInWithOAuth({
-        provider: 'google',
+      const { data, error } = await supabase.auth.signInWithSSO({
+        domain: 'miaoda-gg.com',
         options: {
-          redirectTo: `${window.location.origin}/products`,
-          skipBrowserRedirect: true,
+          redirectTo: `${window.location.origin}/products`
         },
       });
+      if (data?.url) window.open(data.url, '_self');
 
       if (error) {
         if (error.message.includes('provider is not enabled') || error.message.includes('Unsupported provider')) {
