@@ -369,8 +369,16 @@ export function MainLayout({ children }: MainLayoutProps) {
             © {appSettings?.copyright_year?.trim() || new Date().getFullYear()} {appSettings?.copyright_company?.trim() || appSettings?.navbar_name || 'Shottopoth'}. All rights reserved.
           </div>
           
+          <div className="flex items-center gap-4 text-sm text-muted-foreground mt-2">
+            <Link to="/terms" className="hover:text-primary transition-colors">Terms and Conditions</Link>
+            <span>&bull;</span>
+            <Link to="/privacy" className="hover:text-primary transition-colors">Privacy Policy</Link>
+            <span>&bull;</span>
+            <Link to="/social" className="hover:text-primary transition-colors">Social Media</Link>
+          </div>
+          
           {appSettings && (
-            <div className="flex items-center gap-4 justify-center">
+            <div className="flex items-center gap-4 justify-center mt-2">
               {appSettings.social_facebook && (
                 <a href={appSettings.social_facebook} target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-primary transition-colors">
                   <Facebook className="h-5 w-5" />

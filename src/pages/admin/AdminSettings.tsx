@@ -320,6 +320,7 @@ export default function AdminSettings() {
         site_description: appSettings.site_description,
         default_meta_image: appSettings.default_meta_image,
         favicon_url: faviconUrl,
+        privacy_policy: appSettings.privacy_policy,
         copyright_year: appSettings.copyright_year,
         copyright_company: appSettings.copyright_company,
         force_sign_in: appSettings.force_sign_in,
@@ -1158,6 +1159,31 @@ export default function AdminSettings() {
             </div>
             <Button onClick={handleRefundsPolicyUpdate} disabled={loading}>
               {loading ? 'Saving...' : refundsPolicy.id ? 'Save Refunds Policy' : 'Create Refunds Policy'}
+            </Button>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader>
+            <CardTitle>Privacy Policy</CardTitle>
+            <p className="text-sm text-muted-foreground">
+              Edit the privacy policy shown to users on the Privacy page.
+            </p>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="space-y-2">
+              <Label htmlFor="privacy-content">Policy Content</Label>
+              <Textarea
+                id="privacy-content"
+                value={appSettings?.privacy_policy || ''}
+                onChange={(e) => setAppSettings(prev => prev ? { ...prev, privacy_policy: e.target.value } : null)}
+                rows={12}
+                className="font-mono text-sm"
+                placeholder="Enter privacy policy text. HTML is supported."
+              />
+            </div>
+            <Button onClick={handleAppSettingsUpdate} disabled={loading}>
+              {loading ? 'Saving...' : 'Save Privacy Policy'}
             </Button>
           </CardContent>
         </Card>

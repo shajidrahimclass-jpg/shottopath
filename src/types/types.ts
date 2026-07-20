@@ -331,6 +331,7 @@ export interface AppSettings {
   social_youtube: string | null;
   social_whatsapp: string | null;
   social_tiktok: string | null;
+  privacy_policy: string | null;
   created_at: string;
   updated_at: string;
 }

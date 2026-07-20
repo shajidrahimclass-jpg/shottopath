@@ -18,8 +18,8 @@ export default function TermsPage() {
         const data = await getActiveTerms();
         setTerms(data);
       } catch (error) {
-        console.error('이용약관 불러오기 실패:', error);
-        toast.error('이용약관을 불러오지 못했습니다.');
+        console.error('Failed to load terms:', error);
+        toast.error('Failed to load terms and conditions.');
       } finally {
         setLoading(false);
       }
@@ -30,11 +30,11 @@ export default function TermsPage() {
   return (
     <MainLayout>
       <PageMeta
-        title={terms?.title || '이용약관'}
-        description="Shottopoth 이용약관 및 서비스 조건을 확인하세요."
+        title={terms?.title || 'Terms and Conditions'}
+        description="View Shottopoth terms and conditions and service agreements."
       />
       <div className="container mx-auto px-4 py-8 md:py-12 max-w-3xl">
-        {/* 헤더 */}
+        {/* Header */}
         <div className="flex items-center gap-3 mb-8">
           <div className="p-2 bg-primary/10 rounded-full">
             <FileText className="h-6 w-6 text-primary" />
@@ -44,13 +44,13 @@ export default function TermsPage() {
               <Skeleton className="h-7 w-48 bg-muted" />
             ) : (
               <h1 className="text-2xl md:text-3xl font-bold text-balance">
-                {terms?.title || '이용약관'}
+                {terms?.title || 'Terms and Conditions'}
               </h1>
             )}
           </div>
         </div>
 
-        {/* 본문 */}
+        {/* Content */}
         {loading ? (
           <div className="space-y-3">
             {[...Array(8)].map((_, i) => (
@@ -69,14 +69,14 @@ export default function TermsPage() {
         ) : (
           <div className="flex flex-col items-center justify-center py-16 text-center text-muted-foreground gap-3">
             <FileText className="h-12 w-12 opacity-40" />
-            <p className="text-base font-medium">현재 이용약관이 없습니다.</p>
-            <p className="text-sm">더 자세한 내용은 고객 지원에 문의해 주세요.</p>
+            <p className="text-base font-medium">No terms and conditions available.</p>
+            <p className="text-sm">Please contact customer support for more details.</p>
           </div>
         )}
 
         {terms?.updated_at && (
           <p className="text-xs text-muted-foreground mt-8 text-right">
-            최종 업데이트: {new Date(terms.updated_at).toLocaleDateString('ko-KR')}
+            Last updated: {new Date(terms.updated_at).toLocaleDateString()}
           </p>
         )}
       </div>

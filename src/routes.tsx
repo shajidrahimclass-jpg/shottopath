@@ -18,6 +18,8 @@ import ResetPasswordPage from './pages/ResetPasswordPage';
 import EmailVerificationPage from './pages/EmailVerificationPage';
 import AppDownloadsPage from './pages/AppDownloadsPage';
 import TermsPage from './pages/TermsPage';
+import PrivacyPage from './pages/PrivacyPage';
+import SocialPage from './pages/SocialPage';
 import ReviewsPage from './pages/ReviewsPage';
 import RecentlyViewedPage from './pages/RecentlyViewedPage';
 import MobileHomePage from './pages/mobile/MobileHomePage';
@@ -156,6 +158,16 @@ const getRoutes = (): RouteConfig[] => [
     name: 'Terms',
     path: '/terms',
     element: <TermsPage />,
+  },
+  {
+    name: 'Privacy Policy',
+    path: '/privacy',
+    element: <PrivacyPage />,
+  },
+  {
+    name: 'Social Links',
+    path: '/social',
+    element: <SocialPage />,
   },
   {
     name: 'Reviews',
