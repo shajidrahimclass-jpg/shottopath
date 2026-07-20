@@ -120,7 +120,10 @@ export function RecentlyViewed() {
                   )}
                 </div>
                 <div className="p-3 space-y-1">
-                  <h3 className="font-semibold text-sm line-clamp-2 min-h-[2.5rem]">
+                  <h3 
+                    className="font-semibold text-sm truncate min-h-[1.25rem]"
+                    title={product.name}
+                  >
                     {product.name}
                   </h3>
                   <p className="text-lg font-bold text-primary">

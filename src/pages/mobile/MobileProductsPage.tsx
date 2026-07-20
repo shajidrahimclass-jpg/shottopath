@@ -200,7 +200,7 @@ export default function MobileProductsPage() {
                   </div>
                 </div>
                 <div className="p-2.5">
-                  <p className="text-xs font-semibold leading-snug line-clamp-2 mb-1">{p.name}</p>
+                  <p className="text-xs font-semibold leading-snug truncate mb-1" title={p.name}>{p.name}</p>
                   <p className="text-sm font-black text-primary">৳{p.price.toLocaleString()}</p>
                 </div>
               </button>
@@ -364,7 +364,7 @@ export default function MobileProductsPage() {
 
                 {/* Info */}
                 <div className="flex flex-col flex-1 p-2.5 gap-1.5">
-                  <p className="text-xs font-semibold leading-snug line-clamp-2 text-foreground">{p.name}</p>
+                  <p className="text-xs font-semibold leading-snug truncate text-foreground" title={p.name}>{p.name}</p>
                   {p.category && (
                     <span className="text-[10px] text-primary font-medium">{p.category}</span>
                   )}
@@ -404,7 +404,7 @@ export default function MobileProductsPage() {
                 </div>
                 <div className="flex-1 min-w-0 p-3 flex flex-col justify-between">
                   <div>
-                    <p className="text-sm font-bold leading-tight line-clamp-2 mb-1">{p.name}</p>
+                    <p className="text-sm font-bold leading-tight truncate mb-1" title={p.name}>{p.name}</p>
                     {p.category && (
                       <span className="inline-block text-[10px] text-primary font-semibold bg-primary/10 px-2 py-0.5 rounded-full mb-1">{p.category}</span>
                     )}

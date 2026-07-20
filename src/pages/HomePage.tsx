@@ -440,12 +440,16 @@ export default function HomePage() {
                     </div>
                     <CardContent className="p-3 md:p-4">
                     <h3
-                      className="font-semibold mb-1 md:mb-2 cursor-pointer hover:text-primary transition-colors text-sm md:text-base line-clamp-2"
+                      className="font-semibold mb-1 md:mb-2 cursor-pointer hover:text-primary transition-colors text-sm md:text-base truncate"
+                      title={product.name}
                       onClick={() => navigate(`/products/${product.slug || product.id}`)}
                     >
                       {product.name}
                     </h3>
-                    <p className="hidden md:block text-sm text-muted-foreground mb-3 line-clamp-2">
+                    <p 
+                      className="hidden md:block text-sm text-muted-foreground mb-3 truncate"
+                      title={product.description || ''}
+                    >
                       {product.description || 'No description available'}
                     </p>
                     <div className="flex items-center justify-between gap-2 flex-wrap">

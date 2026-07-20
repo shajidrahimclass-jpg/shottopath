@@ -571,12 +571,16 @@ export default function ProductsPage() {
                   
                   <div>
                     <h3
-                      className="font-bold text-lg mb-1.5 cursor-pointer hover:text-primary transition-colors duration-200 line-clamp-2 group-hover:text-primary leading-tight"
+                      className="font-bold text-lg mb-1.5 cursor-pointer hover:text-primary transition-colors duration-200 truncate group-hover:text-primary leading-tight"
+                      title={product.name}
                       onClick={() => navigate(`/products/${product.slug || product.id}`)}
                     >
                       {product.name}
                     </h3>
-                    <p className="text-sm text-muted-foreground line-clamp-2 leading-relaxed">
+                    <p 
+                      className="text-sm text-muted-foreground truncate leading-relaxed"
+                      title={product.description || ''}
+                    >
                       {product.description || 'No description available'}
                     </p>
                   </div>

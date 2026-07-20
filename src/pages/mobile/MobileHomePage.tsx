@@ -295,7 +295,7 @@ export default function MobileHomePage() {
 
                   {/* Bottom info */}
                   <div className="absolute bottom-0 inset-x-0 p-2.5">
-                    <p className="text-white text-[11px] font-bold leading-tight line-clamp-2 mb-1.5 text-balance">{p.name}</p>
+                    <p className="text-white text-[11px] font-bold leading-tight truncate mb-1.5" title={p.name}>{p.name}</p>
                     <div className="flex items-center justify-between">
                       <span className="text-white text-sm font-black">৳{p.price.toLocaleString()}</span>
                       <button
