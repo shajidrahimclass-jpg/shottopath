@@ -89,7 +89,14 @@ export default function MobileLoginPage() {
   const handleGoogleSignIn = async () => {
     setLoading(true);
     const { error } = await signInWithGoogle();
-    if (error) toast.error(error.message || 'Google Sign-in failed');
+    if (error) {
+      const errMsg = error.message || String(error);
+      if (errMsg.includes('not enabled') || errMsg.includes('Unsupported provider')) {
+        toast.error('Google Sign-in is not enabled on this server. Please use email and password.');
+      } else {
+        toast.error(error.message || 'Google Sign-in failed');
+      }
+    }
     setLoading(false);
   };
 

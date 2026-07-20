@@ -40,7 +40,8 @@ export default function AdminOAuthStatus() {
       });
 
       if (error) {
-        if (error.message.includes('provider is not enabled') || error.message.includes('Unsupported provider')) {
+        const errMsg = error.message || String(error);
+        if (errMsg.includes('provider is not enabled') || errMsg.includes('Unsupported provider')) {
           setTestResult('error');
           toast.error('Google provider is not enabled in Supabase');
         } else {
