@@ -758,7 +758,7 @@ export default function ProductDetailPage() {
                           className="p-0 h-auto mt-2 text-primary"
                           onClick={() => navigate(`/products/${slug}/description`)}
                         >
-                          查看完整描述 <ChevronDown className="h-4 w-4 ml-1 rotate-[-90deg]" />
+                          View full description <ChevronDown className="h-4 w-4 ml-1 rotate-[-90deg]" />
                         </Button>
                       )}
                     </>
