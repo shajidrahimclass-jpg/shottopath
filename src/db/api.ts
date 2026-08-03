@@ -103,11 +103,18 @@ export const checkoutOrder = async (
   order: Omit<Order, 'id' | 'created_at' | 'updated_at' | 'user_id'>,
   items: Omit<OrderItem, 'id' | 'order_id' | 'created_at'>[]
 ): Promise<{ order_id: string }> => {
-  const { data, error } = await supabase.rpc('checkout_order', {
-    p_user_id: userId,
+  // If userId is null, we pass undefined so it's omitted from the JSON payload.
+  // We'll update the Postgres function to have a default value for p_user_id.
+  const payload: any = {
     p_order: order,
     p_items: items
-  });
+  };
+  
+  if (userId) {
+    payload.p_user_id = userId;
+  }
+
+  const { data, error } = await supabase.rpc('checkout_order', payload);
   
   if (error) throw new Error(`Checkout failed: ${error.message}`);
   return { order_id: data.order.id };

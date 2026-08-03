@@ -15,6 +15,8 @@ import { useAuth } from '@/contexts/AuthContext';
 import { useDeviceType, getDeviceImages } from '@/hooks/useDeviceType';
 import { ProductOptionsDialog } from '@/components/ProductOptionsDialog';
 import { maskUsername } from '@/lib/utils';
+import { ImageZoomDialog } from '@/components/ImageZoomDialog';
+import { MessageSquare } from 'lucide-react';
 import PageMeta from '@/components/common/PageMeta';
 import { useAppSettings } from '@/contexts/AppSettingsContext';
 
@@ -32,6 +34,9 @@ export default function MobileProductDetailPage() {
   const [dialogOpen, setDialogOpen] = useState(false);
   const [actionType, setActionType] = useState<'cart' | 'buyNow'>('cart');
   const [wishlisted, setWishlisted] = useState(false);
+  const [showReviewImageZoom, setShowReviewImageZoom] = useState(false);
+  const [reviewImages, setReviewImages] = useState<string[]>([]);
+  const [reviewImageIndex, setReviewImageIndex] = useState(0);
   const [imgTouch, setImgTouch] = useState(0);
 
   // Load product independently — never gated on auth state
@@ -103,6 +108,19 @@ export default function MobileProductDetailPage() {
           <Skeleton className="h-4 w-2/3 bg-muted" />
         </div>
       </div>
+      {reviewImages.length > 0 && (
+        <ImageZoomDialog
+          images={reviewImages}
+          currentIndex={reviewImageIndex}
+          open={showReviewImageZoom}
+          onClose={() => {
+            setShowReviewImageZoom(false);
+            setReviewImages([]);
+            setReviewImageIndex(0);
+          }}
+          onNavigate={(index) => setReviewImageIndex(index)}
+        />
+      )}
     </MobileLayout>
   );
 
@@ -257,9 +275,9 @@ export default function MobileProductDetailPage() {
         {product.description && (
           <div className="bg-muted/40 rounded-2xl p-4">
             <h3 className="font-black text-sm mb-2">Description</h3>
-            <p className="text-sm text-muted-foreground leading-relaxed text-pretty whitespace-pre-wrap">
+            <div className="prose prose-sm dark:prose-invert max-w-none text-muted-foreground text-pretty whitespace-pre-wrap">
               {product.description}
-            </p>
+            </div>
           </div>
         )}
 

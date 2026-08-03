@@ -14,6 +14,7 @@ import { Package, ChevronRight, MessageCircle, XCircle, ShoppingBag, Receipt } f
 import { toast } from 'sonner';
 import PageMeta from '@/components/common/PageMeta';
 import { InvoiceDialog } from '@/components/InvoiceDialog';
+import { ReviewDialog } from '@/components/ReviewDialog';
 import {
   AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent,
   AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle,
@@ -36,6 +37,8 @@ export default function MobileOrdersPage() {
   const [cancelling, setCancelling] = useState(false);
   const [invoiceOrder, setInvoiceOrder] = useState<OrderWithItems | null>(null);
   const [invoiceOpen, setInvoiceOpen] = useState(false);
+  const [reviewOrder, setReviewOrder] = useState<OrderWithItems | null>(null);
+  const [reviewDialogOpen, setReviewDialogOpen] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -148,6 +151,17 @@ export default function MobileOrdersPage() {
                         <MessageCircle className="h-3.5 w-3.5 mr-1" />
                         Chat
                       </Button>
+                      {order.status === 'delivered' && (
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          className="h-8 text-xs px-3"
+                          onClick={() => { setReviewOrder(order); setReviewDialogOpen(true); }}
+                        >
+                          <MessageCircle className="h-3.5 w-3.5 mr-1" />
+                          Review
+                        </Button>
+                      )}
                       {['pending', 'processing'].includes(order.status) && (
                         <Button
                           size="sm"
@@ -191,6 +205,15 @@ export default function MobileOrdersPage() {
           open={invoiceOpen}
           onOpenChange={setInvoiceOpen}
           order={invoiceOrder}
+        />
+      )}
+
+      {/* Review Dialog */}
+      {reviewOrder && (
+        <ReviewDialog
+          open={reviewDialogOpen}
+          onOpenChange={setReviewDialogOpen}
+          order={reviewOrder}
         />
       )}
     </MobileLayout>
