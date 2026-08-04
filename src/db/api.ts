@@ -114,7 +114,7 @@ export const checkoutOrder = async (
     payload.p_user_id = userId;
   }
 
-  const { data, error } = await supabase.rpc('checkout_order', payload);
+  const { data, error } = await supabase.rpc('process_checkout', payload);
   
   if (error) throw new Error(`Checkout failed: ${error.message}`);
   return { order_id: data.order.id };
