@@ -1,0 +1,391 @@
+┌─────────────────────────────────┬────────────────────────────┬──────────────────────────┐
+│ table_name                      │ column_name                │ data_type                │
+├─────────────────────────────────┼────────────────────────────┼──────────────────────────┤
+│ admin_notification_preferences  │ created_at                 │ timestamp with time zone │
+│ admin_notification_preferences  │ customer_messages          │ boolean                  │
+│ admin_notification_preferences  │ id                         │ uuid                     │
+│ admin_notification_preferences  │ low_stock                  │ boolean                  │
+│ admin_notification_preferences  │ new_orders                 │ boolean                  │
+│ admin_notification_preferences  │ system_events              │ boolean                  │
+│ admin_notification_preferences  │ updated_at                 │ timestamp with time zone │
+│ admin_notification_preferences  │ user_id                    │ uuid                     │
+│ announcements                   │ copyable_text              │ text                     │
+│ announcements                   │ created_at                 │ timestamp with time zone │
+│ announcements                   │ id                         │ uuid                     │
+│ announcements                   │ image_url                  │ text                     │
+│ announcements                   │ is_active                  │ boolean                  │
+│ announcements                   │ message                    │ text                     │
+│ announcements                   │ title                      │ text                     │
+│ announcements                   │ updated_at                 │ timestamp with time zone │
+│ app_download_analytics          │ browser_name               │ text                     │
+│ app_download_analytics          │ browser_version            │ text                     │
+│ app_download_analytics          │ city                       │ text                     │
+│ app_download_analytics          │ country                    │ text                     │
+│ app_download_analytics          │ device_type                │ text                     │
+│ app_download_analytics          │ download_id                │ uuid                     │
+│ app_download_analytics          │ download_method            │ text                     │
+│ app_download_analytics          │ downloaded_at              │ timestamp with time zone │
+│ app_download_analytics          │ id                         │ uuid                     │
+│ app_download_analytics          │ ip_address                 │ text                     │
+│ app_download_analytics          │ os_name                    │ text                     │
+│ app_download_analytics          │ os_version                 │ text                     │
+│ app_download_analytics          │ page_variant               │ text                     │
+│ app_download_analytics          │ referrer_url               │ text                     │
+│ app_download_analytics          │ region                     │ text                     │
+│ app_download_analytics          │ screen_height              │ integer                  │
+│ app_download_analytics          │ screen_width               │ integer                  │
+│ app_download_analytics          │ session_id                 │ text                     │
+│ app_download_analytics          │ user_id                    │ uuid                     │
+│ app_download_analytics          │ utm_campaign               │ text                     │
+│ app_download_analytics          │ utm_content                │ text                     │
+│ app_download_analytics          │ utm_medium                 │ text                     │
+│ app_download_analytics          │ utm_source                 │ text                     │
+│ app_download_analytics          │ utm_term                   │ text                     │
+│ app_download_page_views         │ browser_name               │ text                     │
+│ app_download_page_views         │ browser_version            │ text                     │
+│ app_download_page_views         │ city                       │ text                     │
+│ app_download_page_views         │ country                    │ text                     │
+│ app_download_page_views         │ device_type                │ text                     │
+│ app_download_page_views         │ id                         │ uuid                     │
+│ app_download_page_views         │ ip_address                 │ text                     │
+│ app_download_page_views         │ os_name                    │ text                     │
+│ app_download_page_views         │ os_version                 │ text                     │
+│ app_download_page_views         │ page_variant               │ text                     │
+│ app_download_page_views         │ referrer_url               │ text                     │
+│ app_download_page_views         │ region                     │ text                     │
+│ app_download_page_views         │ screen_height              │ integer                  │
+│ app_download_page_views         │ screen_width               │ integer                  │
+│ app_download_page_views         │ session_id                 │ text                     │
+│ app_download_page_views         │ user_id                    │ uuid                     │
+│ app_download_page_views         │ utm_campaign               │ text                     │
+│ app_download_page_views         │ utm_content                │ text                     │
+│ app_download_page_views         │ utm_medium                 │ text                     │
+│ app_download_page_views         │ utm_source                 │ text                     │
+│ app_download_page_views         │ utm_term                   │ text                     │
+│ app_download_page_views         │ viewed_at                  │ timestamp with time zone │
+│ app_downloads                   │ created_at                 │ timestamp with time zone │
+│ app_downloads                   │ description                │ text                     │
+│ app_downloads                   │ display_order              │ integer                  │
+│ app_downloads                   │ file_size                  │ text                     │
+│ app_downloads                   │ file_url                   │ text                     │
+│ app_downloads                   │ id                         │ uuid                     │
+│ app_downloads                   │ is_active                  │ boolean                  │
+│ app_downloads                   │ link_url                   │ text                     │
+│ app_downloads                   │ platform                   │ text                     │
+│ app_downloads                   │ title                      │ text                     │
+│ app_downloads                   │ updated_at                 │ timestamp with time zone │
+│ app_downloads                   │ version                    │ text                     │
+│ app_settings                    │ admin_url_path             │ text                     │
+│ app_settings                    │ copyright_company          │ text                     │
+│ app_settings                    │ copyright_year             │ text                     │
+│ app_settings                    │ created_at                 │ timestamp with time zone │
+│ app_settings                    │ default_meta_image         │ text                     │
+│ app_settings                    │ favicon_url                │ text                     │
+│ app_settings                    │ force_sign_in              │ boolean                  │
+│ app_settings                    │ google_analytics_id        │ text                     │
+│ app_settings                    │ id                         │ uuid                     │
+│ app_settings                    │ navbar_name                │ text                     │
+│ app_settings                    │ privacy_policy             │ text                     │
+│ app_settings                    │ site_description           │ text                     │
+│ app_settings                    │ site_title                 │ text                     │
+│ app_settings                    │ social_facebook            │ text                     │
+│ app_settings                    │ social_instagram           │ text                     │
+│ app_settings                    │ social_tiktok              │ text                     │
+│ app_settings                    │ social_twitter             │ text                     │
+│ app_settings                    │ social_whatsapp            │ text                     │
+│ app_settings                    │ social_youtube             │ text                     │
+│ app_settings                    │ updated_at                 │ timestamp with time zone │
+│ banners                         │ created_at                 │ timestamp with time zone │
+│ banners                         │ display_order              │ integer                  │
+│ banners                         │ id                         │ uuid                     │
+│ banners                         │ image_url                  │ text                     │
+│ banners                         │ is_active                  │ boolean                  │
+│ banners                         │ link                       │ text                     │
+│ banners                         │ page                       │ text                     │
+│ banners                         │ title                      │ text                     │
+│ banners                         │ updated_at                 │ timestamp with time zone │
+│ bundle_analytics                │ bundle_id                  │ uuid                     │
+│ bundle_analytics                │ created_at                 │ timestamp with time zone │
+│ bundle_analytics                │ discount_given             │ numeric                  │
+│ bundle_analytics                │ id                         │ uuid                     │
+│ bundle_analytics                │ last_selected_at           │ timestamp with time zone │
+│ bundle_analytics                │ purchases                  │ integer                  │
+│ bundle_analytics                │ revenue_generated          │ numeric                  │
+│ bundle_analytics                │ selections                 │ integer                  │
+│ bundle_analytics                │ updated_at                 │ timestamp with time zone │
+│ bundle_analytics                │ views                      │ integer                  │
+│ categories                      │ created_at                 │ timestamp with time zone │
+│ categories                      │ description                │ text                     │
+│ categories                      │ id                         │ uuid                     │
+│ categories                      │ is_active                  │ boolean                  │
+│ categories                      │ name                       │ text                     │
+│ categories                      │ slug                       │ text                     │
+│ delivery_addresses              │ address                    │ text                     │
+│ delivery_addresses              │ address_type               │ text                     │
+│ delivery_addresses              │ city                       │ text                     │
+│ delivery_addresses              │ country                    │ text                     │
+│ delivery_addresses              │ created_at                 │ timestamp with time zone │
+│ delivery_addresses              │ id                         │ uuid                     │
+│ delivery_addresses              │ is_default                 │ boolean                  │
+│ delivery_addresses              │ label                      │ text                     │
+│ delivery_addresses              │ landmark                   │ text                     │
+│ delivery_addresses              │ name                       │ text                     │
+│ delivery_addresses              │ phone                      │ text                     │
+│ delivery_addresses              │ state                      │ text                     │
+│ delivery_addresses              │ street                     │ text                     │
+│ delivery_addresses              │ user_id                    │ uuid                     │
+│ delivery_addresses              │ zip_code                   │ text                     │
+│ delivery_locations              │ charge                     │ numeric                  │
+│ delivery_locations              │ created_at                 │ timestamp with time zone │
+│ delivery_locations              │ duration                   │ text                     │
+│ delivery_locations              │ id                         │ uuid                     │
+│ delivery_locations              │ is_active                  │ boolean                  │
+│ delivery_locations              │ name                       │ text                     │
+│ delivery_locations              │ payment_methods            │ ARRAY                    │
+│ gift_card_templates             │ created_at                 │ timestamp with time zone │
+│ gift_card_templates             │ emoji                      │ text                     │
+│ gift_card_templates             │ greeting_message           │ text                     │
+│ gift_card_templates             │ header_text                │ text                     │
+│ gift_card_templates             │ id                         │ uuid                     │
+│ gift_card_templates             │ is_active                  │ boolean                  │
+│ gift_card_templates             │ name                       │ text                     │
+│ gift_card_templates             │ occasion                   │ text                     │
+│ gift_card_templates             │ primary_color              │ text                     │
+│ gift_card_templates             │ secondary_color            │ text                     │
+│ gift_card_templates             │ subject_line               │ text                     │
+│ gift_card_templates             │ updated_at                 │ timestamp with time zone │
+│ invoice_settings                │ bank_account_name          │ text                     │
+│ invoice_settings                │ bank_account_number        │ text                     │
+│ invoice_settings                │ bank_name                  │ text                     │
+│ invoice_settings                │ bank_routing_number        │ text                     │
+│ invoice_settings                │ company_address            │ text                     │
+│ invoice_settings                │ company_email              │ text                     │
+│ invoice_settings                │ company_logo               │ text                     │
+│ invoice_settings                │ company_name               │ text                     │
+│ invoice_settings                │ company_phone              │ text                     │
+│ invoice_settings                │ created_at                 │ timestamp with time zone │
+│ invoice_settings                │ custom_notes               │ text                     │
+│ invoice_settings                │ footer_text                │ text                     │
+│ invoice_settings                │ id                         │ uuid                     │
+│ invoice_settings                │ qr_code_content            │ text                     │
+│ invoice_settings                │ show_bank_details          │ boolean                  │
+│ invoice_settings                │ show_logo                  │ boolean                  │
+│ invoice_settings                │ show_qr_code               │ boolean                  │
+│ invoice_settings                │ show_tax_id                │ boolean                  │
+│ invoice_settings                │ tax_id                     │ text                     │
+│ invoice_settings                │ terms_and_conditions       │ text                     │
+│ invoice_settings                │ updated_at                 │ timestamp with time zone │
+│ notifications                   │ created_at                 │ timestamp with time zone │
+│ notifications                   │ id                         │ uuid                     │
+│ notifications                   │ link                       │ text                     │
+│ notifications                   │ message                    │ text                     │
+│ notifications                   │ order_id                   │ uuid                     │
+│ notifications                   │ read                       │ boolean                  │
+│ notifications                   │ title                      │ text                     │
+│ notifications                   │ type                       │ text                     │
+│ notifications                   │ updated_at                 │ timestamp with time zone │
+│ notifications                   │ user_id                    │ uuid                     │
+│ order_items                     │ created_at                 │ timestamp with time zone │
+│ order_items                     │ id                         │ uuid                     │
+│ order_items                     │ order_id                   │ uuid                     │
+│ order_items                     │ product_id                 │ uuid                     │
+│ order_items                     │ product_name               │ text                     │
+│ order_items                     │ product_price              │ numeric                  │
+│ order_items                     │ quantity                   │ integer                  │
+│ order_items                     │ selected_color             │ text                     │
+│ order_items                     │ selected_size              │ text                     │
+│ order_messages                  │ created_at                 │ timestamp with time zone │
+│ order_messages                  │ deleted_at                 │ timestamp with time zone │
+│ order_messages                  │ id                         │ uuid                     │
+│ order_messages                  │ image_url                  │ text                     │
+│ order_messages                  │ is_read                    │ boolean                  │
+│ order_messages                  │ message                    │ text                     │
+│ order_messages                  │ order_id                   │ uuid                     │
+│ order_messages                  │ sender_role                │ text                     │
+│ order_messages                  │ user_id                    │ uuid                     │
+│ orders                          │ created_at                 │ timestamp with time zone │
+│ orders                          │ delivery_address           │ jsonb                    │
+│ orders                          │ delivery_charge            │ numeric                  │
+│ orders                          │ delivery_location_id       │ uuid                     │
+│ orders                          │ disappearing_chat          │ boolean                  │
+│ orders                          │ discount                   │ numeric                  │
+│ orders                          │ gift_card_email            │ text                     │
+│ orders                          │ id                         │ uuid                     │
+│ orders                          │ notes                      │ text                     │
+│ orders                          │ payment_amount             │ text                     │
+│ orders                          │ payment_details            │ text                     │
+│ orders                          │ payment_method             │ text                     │
+│ orders                          │ status                     │ USER-DEFINED             │
+│ orders                          │ subtotal                   │ numeric                  │
+│ orders                          │ total                      │ numeric                  │
+│ orders                          │ transaction_id             │ text                     │
+│ orders                          │ updated_at                 │ timestamp with time zone │
+│ orders                          │ user_id                    │ uuid                     │
+│ orders                          │ voucher_code               │ text                     │
+│ payment_gateways                │ config                     │ jsonb                    │
+│ payment_gateways                │ created_at                 │ timestamp with time zone │
+│ payment_gateways                │ id                         │ uuid                     │
+│ payment_gateways                │ is_enabled                 │ boolean                  │
+│ payment_gateways                │ name                       │ text                     │
+│ product_bundles                 │ bundle_discount_percent    │ numeric                  │
+│ product_bundles                 │ created_at                 │ timestamp with time zone │
+│ product_bundles                 │ display_order              │ integer                  │
+│ product_bundles                 │ id                         │ uuid                     │
+│ product_bundles                 │ is_active                  │ boolean                  │
+│ product_bundles                 │ product_id                 │ uuid                     │
+│ product_bundles                 │ related_product_id         │ uuid                     │
+│ product_bundles                 │ updated_at                 │ timestamp with time zone │
+│ product_manual_acceptances      │ accepted_at                │ timestamp with time zone │
+│ product_manual_acceptances      │ id                         │ uuid                     │
+│ product_manual_acceptances      │ page_source                │ text                     │
+│ product_manual_acceptances      │ product_id                 │ uuid                     │
+│ product_manual_acceptances      │ user_id                    │ uuid                     │
+│ product_user_manual_acceptances │ accepted_at                │ timestamp with time zone │
+│ product_user_manual_acceptances │ id                         │ uuid                     │
+│ product_user_manual_acceptances │ product_id                 │ uuid                     │
+│ product_user_manual_acceptances │ user_id                    │ uuid                     │
+│ products                        │ category                   │ text                     │
+│ products                        │ colors                     │ ARRAY                    │
+│ products                        │ created_at                 │ timestamp with time zone │
+│ products                        │ description                │ text                     │
+│ products                        │ id                         │ uuid                     │
+│ products                        │ image_url                  │ text                     │
+│ products                        │ images                     │ ARRAY                    │
+│ products                        │ is_active                  │ boolean                  │
+│ products                        │ is_gift_card               │ boolean                  │
+│ products                        │ meta_description           │ text                     │
+│ products                        │ meta_image                 │ text                     │
+│ products                        │ min_quantity               │ integer                  │
+│ products                        │ mobile_images              │ ARRAY                    │
+│ products                        │ mobile_thumbnail           │ text                     │
+│ products                        │ name                       │ text                     │
+│ products                        │ pc_images                  │ ARRAY                    │
+│ products                        │ pc_thumbnail               │ text                     │
+│ products                        │ pieces                     │ integer                  │
+│ products                        │ price                      │ numeric                  │
+│ products                        │ profit_margin              │ numeric                  │
+│ products                        │ sizes                      │ ARRAY                    │
+│ products                        │ slug                       │ text                     │
+│ products                        │ stock                      │ integer                  │
+│ products                        │ thumbnail                  │ text                     │
+│ products                        │ updated_at                 │ timestamp with time zone │
+│ products                        │ user_manual                │ text                     │
+│ products                        │ videos                     │ ARRAY                    │
+│ profiles                        │ address                    │ text                     │
+│ profiles                        │ created_at                 │ timestamp with time zone │
+│ profiles                        │ email                      │ text                     │
+│ profiles                        │ full_name                  │ text                     │
+│ profiles                        │ id                         │ uuid                     │
+│ profiles                        │ name                       │ text                     │
+│ profiles                        │ phone                      │ text                     │
+│ profiles                        │ role                       │ USER-DEFINED             │
+│ profiles                        │ updated_at                 │ timestamp with time zone │
+│ profiles                        │ username                   │ text                     │
+│ public_profiles                 │ id                         │ uuid                     │
+│ public_profiles                 │ role                       │ USER-DEFINED             │
+│ public_profiles                 │ username                   │ text                     │
+│ quick_replies                   │ created_at                 │ timestamp with time zone │
+│ quick_replies                   │ created_by                 │ uuid                     │
+│ quick_replies                   │ id                         │ uuid                     │
+│ quick_replies                   │ message                    │ text                     │
+│ quick_replies                   │ title                      │ text                     │
+│ quick_replies                   │ updated_at                 │ timestamp with time zone │
+│ recently_viewed                 │ id                         │ uuid                     │
+│ recently_viewed                 │ product_id                 │ uuid                     │
+│ recently_viewed                 │ user_id                    │ uuid                     │
+│ recently_viewed                 │ viewed_at                  │ timestamp with time zone │
+│ redeem_codes                    │ code                       │ text                     │
+│ redeem_codes                    │ created_at                 │ timestamp with time zone │
+│ redeem_codes                    │ created_by                 │ uuid                     │
+│ redeem_codes                    │ expiry_date                │ timestamp with time zone │
+│ redeem_codes                    │ id                         │ uuid                     │
+│ redeem_codes                    │ price                      │ numeric                  │
+│ redeem_codes                    │ purchased_by               │ uuid                     │
+│ redeem_codes                    │ status                     │ text                     │
+│ redeem_codes                    │ updated_at                 │ timestamp with time zone │
+│ redeem_codes                    │ used_in_order              │ uuid                     │
+│ redeem_codes                    │ value                      │ numeric                  │
+│ refunds_policy                  │ content                    │ text                     │
+│ refunds_policy                  │ created_at                 │ timestamp with time zone │
+│ refunds_policy                  │ id                         │ uuid                     │
+│ refunds_policy                  │ is_active                  │ boolean                  │
+│ refunds_policy                  │ title                      │ text                     │
+│ refunds_policy                  │ updated_at                 │ timestamp with time zone │
+│ review_helpful_votes            │ created_at                 │ timestamp with time zone │
+│ review_helpful_votes            │ id                         │ uuid                     │
+│ review_helpful_votes            │ is_helpful                 │ boolean                  │
+│ review_helpful_votes            │ review_id                  │ uuid                     │
+│ review_helpful_votes            │ updated_at                 │ timestamp with time zone │
+│ review_helpful_votes            │ user_id                    │ uuid                     │
+│ review_responses                │ content                    │ text                     │
+│ review_responses                │ created_at                 │ timestamp with time zone │
+│ review_responses                │ id                         │ uuid                     │
+│ review_responses                │ is_admin                   │ boolean                  │
+│ review_responses                │ review_id                  │ uuid                     │
+│ review_responses                │ updated_at                 │ timestamp with time zone │
+│ review_responses                │ user_id                    │ uuid                     │
+│ reviews                         │ comment                    │ text                     │
+│ reviews                         │ created_at                 │ timestamp with time zone │
+│ reviews                         │ helpful_count              │ integer                  │
+│ reviews                         │ hidden                     │ boolean                  │
+│ reviews                         │ id                         │ uuid                     │
+│ reviews                         │ images                     │ ARRAY                    │
+│ reviews                         │ is_anonymous               │ boolean                  │
+│ reviews                         │ not_helpful_count          │ integer                  │
+│ reviews                         │ order_id                   │ uuid                     │
+│ reviews                         │ product_id                 │ uuid                     │
+│ reviews                         │ rating                     │ integer                  │
+│ reviews                         │ updated_at                 │ timestamp with time zone │
+│ reviews                         │ user_id                    │ uuid                     │
+│ stock_movements                 │ created_at                 │ timestamp with time zone │
+│ stock_movements                 │ created_by                 │ uuid                     │
+│ stock_movements                 │ id                         │ uuid                     │
+│ stock_movements                 │ movement_type              │ text                     │
+│ stock_movements                 │ new_stock                  │ integer                  │
+│ stock_movements                 │ notes                      │ text                     │
+│ stock_movements                 │ previous_stock             │ integer                  │
+│ stock_movements                 │ product_id                 │ uuid                     │
+│ stock_movements                 │ quantity                   │ integer                  │
+│ stock_movements                 │ reason                     │ text                     │
+│ suggested_bundles               │ co_purchase_count          │ integer                  │
+│ suggested_bundles               │ confidence_score           │ numeric                  │
+│ suggested_bundles               │ created_at                 │ timestamp with time zone │
+│ suggested_bundles               │ expected_revenue_impact    │ numeric                  │
+│ suggested_bundles               │ id                         │ uuid                     │
+│ suggested_bundles               │ product_id                 │ uuid                     │
+│ suggested_bundles               │ related_product_id         │ uuid                     │
+│ suggested_bundles               │ reviewed_at                │ timestamp with time zone │
+│ suggested_bundles               │ reviewed_by                │ uuid                     │
+│ suggested_bundles               │ status                     │ text                     │
+│ suggested_bundles               │ suggested_discount_percent │ numeric                  │
+│ terms_and_conditions            │ content                    │ text                     │
+│ terms_and_conditions            │ created_at                 │ timestamp with time zone │
+│ terms_and_conditions            │ id                         │ uuid                     │
+│ terms_and_conditions            │ is_active                  │ boolean                  │
+│ terms_and_conditions            │ title                      │ text                     │
+│ terms_and_conditions            │ updated_at                 │ timestamp with time zone │
+│ user_manual                     │ content                    │ text                     │
+│ user_manual                     │ created_at                 │ timestamp with time zone │
+│ user_manual                     │ id                         │ uuid                     │
+│ user_manual                     │ is_active                  │ boolean                  │
+│ user_manual                     │ title                      │ text                     │
+│ user_manual                     │ updated_at                 │ timestamp with time zone │
+│ user_manual_acceptances         │ accepted_at                │ timestamp with time zone │
+│ user_manual_acceptances         │ id                         │ uuid                     │
+│ user_manual_acceptances         │ user_id                    │ uuid                     │
+│ user_manual_acceptances         │ user_manual_id             │ uuid                     │
+│ vouchers                        │ code                       │ text                     │
+│ vouchers                        │ created_at                 │ timestamp with time zone │
+│ vouchers                        │ expires_at                 │ timestamp with time zone │
+│ vouchers                        │ id                         │ uuid                     │
+│ vouchers                        │ is_active                  │ boolean                  │
+│ vouchers                        │ minimum_amount             │ numeric                  │
+│ vouchers                        │ type                       │ USER-DEFINED             │
+│ vouchers                        │ usage_count                │ integer                  │
+│ vouchers                        │ usage_limit                │ integer                  │
+│ vouchers                        │ value                      │ numeric                  │
+│ wishlist                        │ created_at                 │ timestamp with time zone │
+│ wishlist                        │ id                         │ uuid                     │
+│ wishlist                        │ product_id                 │ uuid                     │
+│ wishlist                        │ user_id                    │ uuid                     │
+└─────────────────────────────────┴────────────────────────────┴──────────────────────────┘
