@@ -9,7 +9,7 @@ import { ReviewDialog } from '@/components/ReviewDialog';
 import { ProductUserManualDialog } from '@/components/ProductUserManualDialog';
 import { InvoiceDialog } from '@/components/InvoiceDialog';
 import { useAuth } from '@/contexts/AuthContext';
-import { getOrders, cancelOrder } from '@/db/api';
+import { getOrders, cancelOrder, getUserReviewedProductIds } from '@/db/api';
 import { supabase } from '@/db/supabase';
 import type { OrderWithItems, OrderItem, Product } from '@/types';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -41,6 +41,7 @@ export default function OrdersPage() {
   const [showManualDialog, setShowManualDialog] = useState(false);
   const [invoiceOrder, setInvoiceOrder] = useState<OrderWithItems | null>(null);
   const [invoiceOpen, setInvoiceOpen] = useState(false);
+  const [reviewedProductIds, setReviewedProductIds] = useState<Set<string>>(new Set());
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -54,8 +55,12 @@ export default function OrdersPage() {
 
     const fetchOrders = async () => {
       try {
-        const data = await getOrders(user.id);
+        const [data, reviewed] = await Promise.all([
+          getOrders(user.id),
+          getUserReviewedProductIds(user.id),
+        ]);
         setOrders(data);
+        setReviewedProductIds(reviewed);
       } catch (error) {
         console.error('Failed to fetch orders:', error);
       } finally {
@@ -80,6 +85,8 @@ export default function OrdersPage() {
     setReviewDialogOpen(false);
     setSelectedOrderId('');
     setSelectedOrderItem(null);
+    // Refresh so the review button hides immediately
+    if (user) getUserReviewedProductIds(user.id).then(setReviewedProductIds);
   };
 
   const handleViewManual = async (productId: string) => {
@@ -365,7 +372,7 @@ export default function OrdersPage() {
                   {order.status === 'delivered' && order.items.length > 0 && (
                     <div className="mt-4 space-y-2">
                       <p className="text-sm font-medium text-muted-foreground">Write Reviews:</p>
-                      {order.items.map((item) => (
+                      {order.items.filter(item => !reviewedProductIds.has(item.product_id)).map((item) => (
                         <Button
                           key={item.id}
                           variant="outline"
@@ -376,6 +383,9 @@ export default function OrdersPage() {
                           <ChevronRight className="h-4 w-4 ml-2 shrink-0" />
                         </Button>
                       ))}
+                      {order.items.every(item => reviewedProductIds.has(item.product_id)) && (
+                        <p className="text-xs text-muted-foreground text-center py-1">✓ All items reviewed</p>
+                      )}
                     </div>
                   )}
                 </CardContent>

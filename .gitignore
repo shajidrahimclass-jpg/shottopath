@@ -33,3 +33,4 @@ historical_context.txt
 package.json.[0-9]*
 .env
 .native-wind-cache
+.vite

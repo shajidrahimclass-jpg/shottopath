@@ -7,7 +7,7 @@ import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Separator } from '@/components/ui/separator';
 import { useAuth } from '@/contexts/AuthContext';
-import { getOrders, cancelOrder } from '@/db/api';
+import { getOrders, cancelOrder, getUserReviewedProductIds } from '@/db/api';
 import { supabase } from '@/db/supabase';
 import type { OrderWithItems } from '@/types';
 import { Package, ChevronRight, MessageCircle, XCircle, ShoppingBag, Receipt } from 'lucide-react';
@@ -37,7 +37,9 @@ export default function MobileOrdersPage() {
   const [cancelling, setCancelling] = useState(false);
   const [invoiceOrder, setInvoiceOrder] = useState<OrderWithItems | null>(null);
   const [invoiceOpen, setInvoiceOpen] = useState(false);
+  const [reviewedProductIds, setReviewedProductIds] = useState<Set<string>>(new Set());
   const [reviewOrder, setReviewOrder] = useState<OrderWithItems | null>(null);
+  const [reviewItem, setReviewItem] = useState<import('@/types').OrderItem | null>(null);
   const [reviewDialogOpen, setReviewDialogOpen] = useState(false);
   const navigate = useNavigate();
 
@@ -56,8 +58,12 @@ export default function MobileOrdersPage() {
   const fetchOrders = async () => {
     if (!user) return;
     try {
-      const data = await getOrders(user.id);
+      const [data, reviewed] = await Promise.all([
+        getOrders(user.id),
+        getUserReviewedProductIds(user.id),
+      ]);
       setOrders(data);
+      setReviewedProductIds(reviewed);
     } catch { toast.error('Failed to load orders'); }
     finally { setLoading(false); }
   };
@@ -156,7 +162,18 @@ export default function MobileOrdersPage() {
                           size="sm"
                           variant="outline"
                           className="h-8 text-xs px-3"
-                          onClick={() => { setReviewOrder(order); setReviewDialogOpen(true); }}
+                          onClick={() => {
+                            const firstUnreviewed = order.items?.find(
+                              i => !reviewedProductIds.has(i.product_id)
+                            );
+                            if (!firstUnreviewed) {
+                              toast.info('You have already reviewed all items in this order');
+                              return;
+                            }
+                            setReviewOrder(order);
+                            setReviewItem(firstUnreviewed);
+                            setReviewDialogOpen(true);
+                          }}
                         >
                           <MessageCircle className="h-3.5 w-3.5 mr-1" />
                           Review
@@ -209,11 +226,18 @@ export default function MobileOrdersPage() {
       )}
 
       {/* Review Dialog */}
-      {reviewOrder && (
+      {reviewOrder && reviewItem && user && (
         <ReviewDialog
           open={reviewDialogOpen}
-          onOpenChange={setReviewDialogOpen}
-          order={reviewOrder}
+          onClose={() => {
+            setReviewDialogOpen(false);
+            setReviewItem(null);
+            // Refresh reviewed product ids so button hides immediately after submit
+            getUserReviewedProductIds(user.id).then(setReviewedProductIds);
+          }}
+          orderId={reviewOrder.id}
+          orderItem={reviewItem}
+          userId={user.id}
         />
       )}
     </MobileLayout>

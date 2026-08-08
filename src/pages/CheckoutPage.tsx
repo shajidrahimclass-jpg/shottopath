@@ -85,6 +85,10 @@ export default function CheckoutPage() {
   const [successModalOpen, setSuccessModalOpen] = useState(false);
   const [createdOrderId, setCreatedOrderId] = useState<string | null>(null);
   const [agreedToEmailWarning, setAgreedToEmailWarning] = useState(false);
+  // Guest checkout info (when user is not logged in)
+  const [guestName, setGuestName] = useState('');
+  const [guestPhone, setGuestPhone] = useState('');
+  const [guestEmail, setGuestEmail] = useState('');
 
   useEffect(() => {
     // Scroll to top when page loads
@@ -345,6 +349,19 @@ export default function CheckoutPage() {
       }
     }
 
+    // Guest checkout validation
+    if (!user) {
+      if (!guestName.trim() || !guestPhone.trim() || !guestEmail.trim()) {
+        toast.error('Please fill in your name, phone, and email to continue as guest');
+        return;
+      }
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailRegex.test(guestEmail.trim())) {
+        toast.error('Please enter a valid email address');
+        return;
+      }
+    }
+
     // Validate gift card email if cart contains gift card products
     if (hasGiftCard) {
       if (!giftCardEmail.trim()) {
@@ -436,6 +453,9 @@ export default function CheckoutPage() {
         voucher_code: appliedVoucher?.code || null,
         notes: orderNotes.trim() || null,
         gift_card_email: hasGiftCard ? giftCardEmail.trim() : null,
+        guest_email: !user ? guestEmail.trim() : null,
+        guest_name: !user ? guestName.trim() : null,
+        guest_phone: !user ? guestPhone.trim() : null,
       };
 
       const orderItems = cartItems.map(item => ({
@@ -495,6 +515,9 @@ export default function CheckoutPage() {
         voucher_code: appliedVoucher?.code || null,
         notes: orderNotes.trim() || null,
         gift_card_email: hasGiftCard ? giftCardEmail.trim() : null,
+        guest_email: !user ? guestEmail.trim() : null,
+        guest_name: !user ? guestName.trim() : null,
+        guest_phone: !user ? guestPhone.trim() : null,
         disappearing_chat: false
       };
 
@@ -848,6 +871,46 @@ export default function CheckoutPage() {
                 </div>
               </CardHeader>
               <CardContent className="p-4 md:p-6">
+                {/* Guest info form — shown only when not logged in */}
+                {!user && (
+                  <div className="mb-4 space-y-3 p-4 rounded-xl border-2 border-dashed border-primary/40 bg-primary/5">
+                    <p className="text-sm font-semibold text-primary">Guest Information (required)</p>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                      <div className="space-y-1">
+                        <Label htmlFor="guest-name">Full Name *</Label>
+                        <Input
+                          id="guest-name"
+                          value={guestName}
+                          onChange={e => setGuestName(e.target.value)}
+                          placeholder="Your full name"
+                          className="border-2"
+                        />
+                      </div>
+                      <div className="space-y-1">
+                        <Label htmlFor="guest-phone">Phone Number *</Label>
+                        <Input
+                          id="guest-phone"
+                          value={guestPhone}
+                          onChange={e => setGuestPhone(e.target.value)}
+                          placeholder="e.g. 01XXXXXXXXX"
+                          className="border-2"
+                        />
+                      </div>
+                    </div>
+                    <div className="space-y-1">
+                      <Label htmlFor="guest-email">Email Address *</Label>
+                      <Input
+                        id="guest-email"
+                        type="email"
+                        value={guestEmail}
+                        onChange={e => setGuestEmail(e.target.value)}
+                        placeholder="your@email.com"
+                        className="border-2"
+                      />
+                      <p className="text-xs text-muted-foreground">Used to track your order status</p>
+                    </div>
+                  </div>
+                )}
                 {addresses.length === 0 ? (
                   <div className="text-center py-6 md:py-8 space-y-3">
                     <div className="mx-auto w-12 h-12 md:w-16 md:h-16 rounded-full bg-muted flex items-center justify-center">

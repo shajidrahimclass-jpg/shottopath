@@ -130,6 +130,53 @@ export const getGuestOrder = async (orderId: string, phone: string) => {
   return data; // returns { order, delivery_address, items }
 };
 
+// Returns true if the user has at least one delivered order containing the given product
+export const hasPurchasedProduct = async (
+  userId: string,
+  productId: string
+): Promise<boolean> => {
+  try {
+    const { data, error } = await supabase
+      .from('orders')
+      .select('id, order_items!inner(product_id)')
+      .eq('user_id', userId)
+      .eq('status', 'delivered')
+      .eq('order_items.product_id', productId)
+      .limit(1);
+
+    if (error) return false;
+    return Array.isArray(data) && data.length > 0;
+  } catch {
+    return false;
+  }
+};
+
+// Returns all delivered orders for a user — used to determine review eligibility
+export const getDeliveredOrders = async (userId: string): Promise<OrderWithItems[]> => {
+  const { data: orders, error } = await supabase
+    .from('orders')
+    .select('*')
+    .eq('user_id', userId)
+    .eq('status', 'delivered')
+    .order('created_at', { ascending: false });
+
+  if (error) throw error;
+  if (!orders || orders.length === 0) return [];
+
+  const orderIds = orders.map(o => o.id);
+  const { data: items, error: itemsError } = await supabase
+    .from('order_items')
+    .select('*')
+    .in('order_id', orderIds);
+
+  if (itemsError) throw itemsError;
+
+  return orders.map(order => ({
+    ...order,
+    items: Array.isArray(items) ? items.filter(item => item.order_id === order.id) : [],
+  }));
+};
+
 export const updateDeliveryAddress = async (id: string, updates: Partial<DeliveryAddress>): Promise<DeliveryAddress> => {
   const { data, error } = await supabase
     .from('delivery_addresses')
@@ -794,6 +841,20 @@ export const getUserReviews = async (userId: string): Promise<Review[]> => {
   
   if (error) throw error;
   return Array.isArray(data) ? data : [];
+};
+
+// Returns a Set of product_ids the user has already reviewed — used to hide duplicate review buttons
+export const getUserReviewedProductIds = async (userId: string): Promise<Set<string>> => {
+  try {
+    const { data, error } = await supabase
+      .from('reviews')
+      .select('product_id')
+      .eq('user_id', userId);
+    if (error) return new Set();
+    return new Set((data || []).map((r: any) => r.product_id as string));
+  } catch {
+    return new Set();
+  }
 };
 
 export const createReview = async (review: Omit<Review, 'id' | 'created_at' | 'updated_at'>): Promise<Review> => {
