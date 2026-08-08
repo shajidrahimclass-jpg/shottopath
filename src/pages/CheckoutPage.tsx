@@ -1331,16 +1331,16 @@ export default function CheckoutPage() {
       <RefundsDialog open={refundsDialogOpen} onOpenChange={setRefundsDialogOpen} />
       
       <OrderSuccessModal 
-        open={successModalOpen} 
+        open={successModalOpen}
+        guestOrderId={!user ? createdOrderId : null}
+        guestPhone={!user ? (addresses.find(a => a.id === selectedAddress)?.phone || newAddress.phone || '') : undefined}
+        guestEmail={!user ? guestEmail : undefined}
+        isMobileRoute={isMobileRoute}
         onAnimationComplete={() => {
           if (user) {
             navigate(isMobileRoute ? MOBILE_ROUTES.orders : '/orders');
-          } else if (createdOrderId) {
-            const currentAddress = addresses.find(a => a.id === selectedAddress);
-            const phone = currentAddress?.phone || newAddress.phone || '';
-            const trackUrl = `/track-order?id=${createdOrderId}&phone=${encodeURIComponent(phone)}`;
-            navigate(isMobileRoute ? `${MOBILE_BASE}${trackUrl}` : trackUrl);
           }
+          // Guest flow is handled inside the modal via CTA buttons
         }}
       />
     </Layout>

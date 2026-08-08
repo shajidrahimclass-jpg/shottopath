@@ -11,7 +11,7 @@ interface RouteGuardProps {
 const PUBLIC_ROUTES = [
   '/login', '/forgot-password', '/reset-password', '/verify-email',
   '/403', '/404', '/', '/products', '/products/*', '/app',
-  '/terms', '/reviews',
+  '/terms', '/privacy', '/reviews', '/track-order',
   // Mobile web app — entire subtree is public (auth handled internally per page)
   '/cjwjkkeojejdhishwihswugudhijeid/mobile/shottopath/op',
   '/cjwjkkeojejdhishwihswugudhijeid/mobile/shottopath/op/*',
