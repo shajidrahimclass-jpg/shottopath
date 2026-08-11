@@ -114,9 +114,13 @@ export const checkoutOrder = async (
     payload.p_user_id = userId;
   }
 
-  const { data, error } = await supabase.rpc('process_checkout', payload);
-  
+  // Call Edge Function directly — avoids PostgREST schema cache issues with RPC
+  const { data, error } = await supabase.functions.invoke('process-checkout', {
+    body: payload,
+  });
+
   if (error) throw new Error(`Checkout failed: ${error.message}`);
+  if (data?.error) throw new Error(`Checkout failed: ${data.error}`);
   return { order_id: data.order.id };
 };
 

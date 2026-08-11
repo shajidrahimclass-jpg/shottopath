@@ -554,7 +554,7 @@ export default function ProductDetailPage() {
                 <>
                   <PinchZoomImage
                     src={displayImages[selectedImageIndex]}
-                    alt={product.meta_image_alt || `${product.name} product image`}
+                    alt={product.meta_image || `${product.name} product image`}
                     className="w-full h-full object-cover object-center transition-all duration-700 group-hover:scale-110 protected-image animate-in fade-in duration-500"
                     fetchpriority="high"
                   />
@@ -577,7 +577,7 @@ export default function ProductDetailPage() {
                 <>
                   <img
                     src={product.image_url}
-                    alt={product.meta_image_alt || `${product.name} product image`}
+                    alt={product.meta_image || `${product.name} product image`}
                     className="w-full h-full object-cover object-center transition-all duration-700 group-hover:scale-110 protected-image"
                     onContextMenu={(e) => e.preventDefault()}
                     draggable="false"
@@ -620,7 +620,7 @@ export default function ProductDetailPage() {
                   >
                     <img
                       src={image}
-                      alt={product.meta_image_alt || `${product.name} view ${index + 1}`}
+                      alt={product.meta_image || `${product.name} view ${index + 1}`}
                       className="w-full h-full object-cover object-center transition-transform duration-300 protected-image"
                       onContextMenu={(e) => e.preventDefault()}
                       draggable="false"

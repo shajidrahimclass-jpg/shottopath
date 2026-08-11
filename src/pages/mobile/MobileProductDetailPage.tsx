@@ -148,7 +148,7 @@ export default function MobileProductDetailPage() {
         {images.length > 0 && images[0] ? (
           <>
             {images.map((src, i) => (
-              <img key={i} src={src} alt={product.meta_image_alt || `${product.name} product image ${i + 1}`}
+              <img key={i} src={src} alt={product.meta_image || `${product.name} product image ${i + 1}`}
                 fetchpriority={i === 0 ? "high" : "auto"}
                 loading={i === 0 ? "eager" : "lazy"}
                 className={`absolute inset-0 w-full h-full object-cover transition-all duration-500 ${i === imgIndex ? 'opacity-100 scale-100' : 'opacity-0 scale-105'}`} />
@@ -209,7 +209,7 @@ export default function MobileProductDetailPage() {
             {images.slice(0, 5).map((src, i) => (
               <button key={i} onClick={() => setImgIndex(i)}
                 className={`h-10 w-10 rounded-xl overflow-hidden border-2 transition-all ${i === imgIndex ? 'border-white scale-105' : 'border-white/30 opacity-60'}`}>
-                <img src={src} alt={product.meta_image_alt || `${product.name} thumbnail ${i + 1}`} loading="lazy" className="w-full h-full object-cover" />
+                <img src={src} alt={product.meta_image || `${product.name} thumbnail ${i + 1}`} loading="lazy" className="w-full h-full object-cover" />
               </button>
             ))}
           </div>
