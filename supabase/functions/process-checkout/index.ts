@@ -28,18 +28,17 @@ serve(async (req: Request) => {
       { auth: { persistSession: false } }
     );
 
-    // ── Insert order ────────────────────────────────────────────────────────
+    // ── Insert order — only columns that exist in the orders table ──────────
     const orderInsert: Record<string, unknown> = {
       status:               p_order.status ?? 'pending',
       payment_method:       p_order.payment_method,
-      payment_status:       p_order.payment_status ?? 'pending',
       payment_amount:       p_order.payment_amount ?? null,
       payment_details:      p_order.payment_details ?? null,
       transaction_id:       p_order.transaction_id ?? null,
-      subtotal:             p_order.subtotal,
-      delivery_charge:      p_order.delivery_charge ?? 0,
-      discount:             p_order.discount ?? 0,
-      total:                p_order.total,
+      subtotal:             Number(p_order.subtotal),
+      delivery_charge:      Number(p_order.delivery_charge ?? 0),
+      discount:             Number(p_order.discount ?? 0),
+      total:                Number(p_order.total),
       delivery_address:     p_order.delivery_address,
       delivery_location_id: p_order.delivery_location_id ?? null,
       voucher_code:         p_order.voucher_code ?? null,
