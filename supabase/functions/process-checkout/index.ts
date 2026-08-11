@@ -21,12 +21,10 @@ serve(async (req: Request) => {
       );
     }
 
-    // Use service role key stored as SVC_ROLE_KEY (SUPABASE_ prefix is reserved)
-    // Falls back to SUPABASE_SERVICE_ROLE_KEY which Supabase auto-injects
-    const serviceKey = Deno.env.get('SVC_ROLE_KEY') || Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
+    // SUPABASE_SERVICE_ROLE_KEY is auto-injected by Supabase Edge Function runtime
     const supabaseAdmin = createClient(
       Deno.env.get('SUPABASE_URL')!,
-      serviceKey,
+      Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!,
       { auth: { persistSession: false } }
     );
 
