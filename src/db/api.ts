@@ -152,11 +152,13 @@ export const checkoutOrder = async (
     const { error: itemErr } = await supabase
       .from('order_items')
       .insert({
-        order_id:      orderId,
-        product_id:    item.product_id,
-        product_name:  item.product_name,
-        product_price: item.product_price,
-        quantity:      item.quantity,
+        order_id:       orderId,
+        product_id:     item.product_id,
+        product_name:   item.product_name,
+        product_price:  item.product_price,
+        quantity:       item.quantity,
+        selected_color: item.selected_color ?? null,
+        selected_size:  item.selected_size ?? null,
       });
     if (itemErr) throw new Error(`Checkout failed: ${itemErr.message}`);
 
@@ -1664,14 +1666,24 @@ export const updateAppSettings = async (
 // ==================== Order Messages ====================
 
 export const getOrderMessages = async (orderId: string) => {
-  // Auto-delete messages older than 7 days for security
-  const expiryDate = new Date();
-  expiryDate.setDate(expiryDate.getDate() - 7);
-  await supabase
-    .from('order_messages')
-    .delete()
-    .eq('order_id', orderId)
-    .lt('created_at', expiryDate.toISOString());
+  // Auto-delete messages older than 7 days — admin-only, so skip for regular users
+  const { data: { user } } = await supabase.auth.getUser();
+  if (user) {
+    const { data: profile } = await supabase
+      .from('profiles')
+      .select('role')
+      .eq('id', user.id)
+      .single();
+    if (profile?.role === 'admin') {
+      const expiryDate = new Date();
+      expiryDate.setDate(expiryDate.getDate() - 7);
+      await supabase
+        .from('order_messages')
+        .delete()
+        .eq('order_id', orderId)
+        .lt('created_at', expiryDate.toISOString());
+    }
+  }
 
   const { data, error } = await supabase
     .from('order_messages')

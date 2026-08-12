@@ -86,22 +86,20 @@ export default function ChatPage() {
   // Disappearing chat logic
   useEffect(() => {
     if (!order?.disappearing_chat || !orderId) return;
-    
+
     const cleanupInterval = setInterval(async () => {
       try {
-        // Delete messages older than 30 seconds
         const thirtySecondsAgo = new Date(Date.now() - 30000).toISOString();
-        
-        await supabase
-          .from('order_messages')
-          .delete()
-          .eq('order_id', orderId)
-          .lt('created_at', thirtySecondsAgo);
+        // Use SECURITY DEFINER RPC — avoids 403 for regular users
+        await supabase.rpc('cleanup_disappearing_messages', {
+          p_order_id:        orderId,
+          p_before_timestamp: thirtySecondsAgo,
+        });
       } catch (error) {
         console.error('Failed to cleanup disappearing messages:', error);
       }
     }, 10000);
-    
+
     return () => clearInterval(cleanupInterval);
   }, [order?.disappearing_chat, orderId]);
 
