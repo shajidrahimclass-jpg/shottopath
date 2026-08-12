@@ -12,6 +12,7 @@ import { RouteGuard } from '@/components/common/RouteGuard';
 import { AnnouncementPopup } from '@/components/common/AnnouncementPopup';
 import { KeyboardShortcutsOverlay } from '@/components/KeyboardShortcutsOverlay';
 import { MobileCookieConsent } from '@/components/mobile/MobileCookieConsent';
+import { MobileAppBanner } from '@/components/MobileAppBanner';
 import { Toaster } from 'sonner';
 
 const AppRoutes: React.FC = () => {
@@ -53,6 +54,7 @@ const App: React.FC = () => {
                 <AnnouncementPopup />
                 <AppRoutes />
                 <KeyboardShortcutsOverlay />
+                <MobileAppBanner />
                 <MobileCookieConsent />
                 <Toaster />
               </RouteGuard>
