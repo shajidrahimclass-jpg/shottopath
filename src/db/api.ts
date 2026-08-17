@@ -103,73 +103,17 @@ export const checkoutOrder = async (
   order: Omit<Order, 'id' | 'created_at' | 'updated_at' | 'user_id'>,
   items: Omit<OrderItem, 'id' | 'order_id' | 'created_at'>[]
 ): Promise<{ order_id: string }> => {
-  // If userId is null, we pass undefined so it's omitted from the JSON payload.
-  // We'll update the Postgres function to have a default value for p_user_id.
-  const payload: any = {
+  // Use atomic SECURITY DEFINER RPC — single round-trip, no RLS race conditions
+  const payload: Record<string, unknown> = {
     p_order: order,
-    p_items: items
+    p_items: items,
   };
-  
-  if (userId) {
-    payload.p_user_id = userId;
-  }
+  if (userId) payload.p_user_id = userId;
 
-  // Direct table inserts — no RPC or Edge Function needed, avoids schema cache issues entirely
-  const orderInsert: Record<string, unknown> = {
-    status:               'pending',
-    payment_method:       payload.p_order.payment_method,
-    payment_amount:       payload.p_order.payment_amount ?? null,
-    payment_details:      payload.p_order.payment_details ?? null,
-    transaction_id:       payload.p_order.transaction_id ?? null,
-    subtotal:             Number(payload.p_order.subtotal),
-    delivery_charge:      Number(payload.p_order.delivery_charge ?? 0),
-    discount:             Number(payload.p_order.discount ?? 0),
-    total:                Number(payload.p_order.total),
-    delivery_address:     payload.p_order.delivery_address,
-    delivery_location_id: payload.p_order.delivery_location_id ?? null,
-    voucher_code:         payload.p_order.voucher_code ?? null,
-    notes:                payload.p_order.notes ?? null,
-    gift_card_email:      payload.p_order.gift_card_email ?? null,
-    guest_email:          payload.p_order.guest_email ?? null,
-    guest_name:           payload.p_order.guest_name ?? null,
-    guest_phone:          payload.p_order.guest_phone ?? null,
-    disappearing_chat:    payload.p_order.disappearing_chat ?? false,
-  };
-  if (payload.p_user_id) orderInsert.user_id = payload.p_user_id;
+  const { data, error } = await supabase.rpc('process_checkout', payload);
+  if (error) throw new Error(`Checkout failed: ${error.message}`);
 
-  const { data: orderRow, error: orderErr } = await supabase
-    .from('orders')
-    .insert(orderInsert)
-    .select('id')
-    .single();
-
-  if (orderErr) throw new Error(`Checkout failed: ${orderErr.message}`);
-
-  const orderId = orderRow.id;
-
-  // Insert order items and decrement stock
-  for (const item of payload.p_items) {
-    const { error: itemErr } = await supabase
-      .from('order_items')
-      .insert({
-        order_id:       orderId,
-        product_id:     item.product_id,
-        product_name:   item.product_name,
-        product_price:  item.product_price,
-        quantity:       item.quantity,
-        selected_color: item.selected_color ?? null,
-        selected_size:  item.selected_size ?? null,
-      });
-    if (itemErr) throw new Error(`Checkout failed: ${itemErr.message}`);
-
-    // Decrement stock via RPC (safe atomic update)
-    await supabase.rpc('decrement_stock', {
-      p_product_id: item.product_id,
-      p_quantity:   item.quantity,
-    }).throwOnError();
-  }
-
-  return { order_id: orderId };
+  return { order_id: (data as { order_id: string }).order_id };
 };
 
 export const getGuestOrder = async (orderId: string, phone: string) => {
