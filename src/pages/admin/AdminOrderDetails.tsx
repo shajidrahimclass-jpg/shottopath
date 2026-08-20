@@ -470,7 +470,7 @@ export default function AdminOrderDetails() {
               </CardContent>
             </Card>
 
-            {/* Customer Information */}
+            {/* Registered Customer Information */}
             {order.user && (
               <Card>
                 <CardHeader>
@@ -514,6 +514,66 @@ export default function AdminOrderDetails() {
                       <Copy className="h-4 w-4" />
                     </Button>
                   </div>
+                </CardContent>
+              </Card>
+            )}
+
+            {/* Guest Customer Information */}
+            {!order.user_id && (order.guest_name || order.guest_email || order.guest_phone) && (
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <UserCircle className="h-5 w-5" />
+                    Guest Customer
+                    <Badge variant="outline" className="text-xs bg-muted ml-1">Guest</Badge>
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  {order.guest_name && (
+                    <div className="flex items-start justify-between gap-3">
+                      <div className="flex items-start gap-3 flex-1">
+                        <User className="h-5 w-5 text-muted-foreground mt-0.5" />
+                        <div>
+                          <p className="text-sm text-muted-foreground mb-1">Name</p>
+                          <p className="font-medium">{order.guest_name}</p>
+                        </div>
+                      </div>
+                      <Button variant="ghost" size="icon" className="h-8 w-8"
+                        onClick={() => copyToClipboard(order.guest_name!, 'Guest Name')}>
+                        <Copy className="h-4 w-4" />
+                      </Button>
+                    </div>
+                  )}
+                  {order.guest_email && (
+                    <div className="flex items-start justify-between gap-3">
+                      <div className="flex items-start gap-3 flex-1">
+                        <Mail className="h-5 w-5 text-muted-foreground mt-0.5" />
+                        <div>
+                          <p className="text-sm text-muted-foreground mb-1">Email</p>
+                          <p className="font-medium break-all">{order.guest_email}</p>
+                        </div>
+                      </div>
+                      <Button variant="ghost" size="icon" className="h-8 w-8"
+                        onClick={() => copyToClipboard(order.guest_email!, 'Guest Email')}>
+                        <Copy className="h-4 w-4" />
+                      </Button>
+                    </div>
+                  )}
+                  {order.guest_phone && (
+                    <div className="flex items-start justify-between gap-3">
+                      <div className="flex items-start gap-3 flex-1">
+                        <Phone className="h-5 w-5 text-muted-foreground mt-0.5" />
+                        <div>
+                          <p className="text-sm text-muted-foreground mb-1">Phone</p>
+                          <p className="font-medium">{order.guest_phone}</p>
+                        </div>
+                      </div>
+                      <Button variant="ghost" size="icon" className="h-8 w-8"
+                        onClick={() => copyToClipboard(order.guest_phone!, 'Guest Phone')}>
+                        <Copy className="h-4 w-4" />
+                      </Button>
+                    </div>
+                  )}
                 </CardContent>
               </Card>
             )}

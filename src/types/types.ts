@@ -183,6 +183,9 @@ export interface Order {
   voucher_code: string | null;
   notes: string | null;
   gift_card_email: string | null;
+  guest_email: string | null;
+  guest_name: string | null;
+  guest_phone: string | null;
   created_at: string;
   updated_at: string;
 }

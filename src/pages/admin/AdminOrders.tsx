@@ -54,19 +54,15 @@ export default function AdminOrders() {
     if (searchQuery.trim()) {
       const query = searchQuery.toLowerCase().trim();
       filtered = filtered.filter(order => {
-        // Search by order ID
         if (order.id.toLowerCase().includes(query)) return true;
-        
-        // Search by user name (from user object or delivery address)
         if (order.user?.username?.toLowerCase().includes(query)) return true;
-        if (order.delivery_address?.name?.toLowerCase().includes(query)) return true;
-        
-        // Search by user email
         if (order.user?.email?.toLowerCase().includes(query)) return true;
-        
-        // Search by phone
+        if (order.delivery_address?.name?.toLowerCase().includes(query)) return true;
         if (order.delivery_address?.phone?.toLowerCase().includes(query)) return true;
-        
+        // Guest fields
+        if (order.guest_name?.toLowerCase().includes(query)) return true;
+        if (order.guest_email?.toLowerCase().includes(query)) return true;
+        if (order.guest_phone?.toLowerCase().includes(query)) return true;
         return false;
       });
     }

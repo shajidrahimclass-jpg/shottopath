@@ -103,10 +103,11 @@ export const checkoutOrder = async (
   order: Omit<Order, 'id' | 'created_at' | 'updated_at' | 'user_id'>,
   items: Omit<OrderItem, 'id' | 'order_id' | 'created_at'>[]
 ): Promise<{ order_id: string }> => {
-  // Use atomic SECURITY DEFINER RPC — single round-trip, no RLS race conditions
+  // Serialize as text strings — prevents PostgREST schema cache from
+  // trying to resolve jsonb keys against orders table columns.
   const payload: Record<string, unknown> = {
-    p_order: order,
-    p_items: items,
+    p_order: JSON.stringify(order),
+    p_items: JSON.stringify(items),
   };
   if (userId) payload.p_user_id = userId;
 
@@ -512,20 +513,34 @@ export const getOrders = async (userId?: string): Promise<OrderWithItems[]> => {
   const { data: orders, error } = await query;
   
   if (error) throw error;
-  
   if (!orders || orders.length === 0) return [];
   
   const orderIds = orders.map(o => o.id);
+
+  // Fetch order items
   const { data: items, error: itemsError } = await supabase
     .from('order_items')
     .select('*')
     .in('order_id', orderIds);
-  
   if (itemsError) throw itemsError;
+
+  // Fetch profiles for authenticated orders only
+  const userIds = [...new Set(orders.map(o => o.user_id).filter(Boolean))] as string[];
+  let profileMap: Record<string, { username: string; email: string }> = {};
+  if (userIds.length > 0) {
+    const { data: profiles } = await supabase
+      .from('profiles')
+      .select('id, username, email')
+      .in('id', userIds);
+    if (profiles) {
+      profiles.forEach(p => { profileMap[p.id] = { username: p.username, email: p.email }; });
+    }
+  }
   
   return orders.map(order => ({
     ...order,
     items: Array.isArray(items) ? items.filter(item => item.order_id === order.id) : [],
+    user: order.user_id ? profileMap[order.user_id] : undefined,
   }));
 };
 
@@ -546,21 +561,21 @@ export const getOrder = async (id: string): Promise<OrderWithItems | null> => {
   
   if (itemsError) throw itemsError;
   
-  // Get user information
-  const { data: userProfile, error: userError } = await supabase
-    .from('profiles')
-    .select('username, email')
-    .eq('id', order.user_id)
-    .maybeSingle();
-  
-  if (userError) {
-    console.error('Failed to fetch user profile:', userError);
+  // Only fetch profile for authenticated (non-guest) orders
+  let userProfile: { username: string; email: string } | undefined;
+  if (order.user_id) {
+    const { data: profile } = await supabase
+      .from('profiles')
+      .select('username, email')
+      .eq('id', order.user_id)
+      .maybeSingle();
+    userProfile = profile || undefined;
   }
   
   return {
     ...order,
     items: Array.isArray(items) ? items : [],
-    user: userProfile || undefined,
+    user: userProfile,
   };
 };
 
