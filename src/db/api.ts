@@ -103,11 +103,11 @@ export const checkoutOrder = async (
   order: Omit<Order, 'id' | 'created_at' | 'updated_at' | 'user_id'>,
   items: Omit<OrderItem, 'id' | 'order_id' | 'created_at'>[]
 ): Promise<{ order_id: string }> => {
-  // Serialize as text strings — prevents PostgREST schema cache from
-  // trying to resolve jsonb keys against orders table columns.
+  // Pass jsonb directly — submit_order uses named jsonb params,
+  // no schema cache column-name conflict possible.
   const payload: Record<string, unknown> = {
-    p_order: JSON.stringify(order),
-    p_items: JSON.stringify(items),
+    p_order: order,
+    p_items: items,
   };
   if (userId) payload.p_user_id = userId;
 
